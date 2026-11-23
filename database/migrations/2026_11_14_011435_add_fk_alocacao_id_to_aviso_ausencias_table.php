@@ -1,0 +1,25 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::table('aviso_ausencias', function (Blueprint $table) {
+            $table->foreign('alocacao_id')
+                ->references('id')
+                ->on('alocacoes')
+                ->nullOnDelete();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::table('aviso_ausencias', function (Blueprint $table) {
+            $table->dropForeign(['alocacao_id']);
+        });
+    }
+};

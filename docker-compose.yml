@@ -1,0 +1,42 @@
+name: obede
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: obede-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: obede
+      MYSQL_USER: obede
+      MYSQL_PASSWORD: obede
+      TZ: America/Sao_Paulo
+    ports:
+      - "3307:3306"   # 3307 no host evita conflito com MySQL local
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-proot"]
+      interval: 3s
+      retries: 20
+      start_period: 15s
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: obede-phpmyadmin
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: root
+      UPLOAD_LIMIT: 256M
+      TZ: America/Sao_Paulo
+    ports:
+      - "8080:80"     # acesse em http://localhost:8080
+
+volumes:
+  mysql-data:
