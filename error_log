@@ -1,0 +1,42 @@
+[22-Nov-2026 19:03:51 America/Fortaleza] PHP Warning:  syntax error, unexpected '=' in /home4/adtc2m99/public_html/sistemas/obede/.env on line 3
+ in /home4/adtc2m99/public_html/sistemas/obede/deploy.php on line 57
+[23-Nov-2026 20:00:06 UTC] PHP Fatal error:  Namespace declaration statement has to be the very first statement or after any declare call in the script in /home4/adtc2m99/public_html/sistemas/obede/app/Http/Controllers/Admin/AlocacaoController.php on line 4
+[23-Nov-2026 20:00:28 UTC] PHP Fatal error:  Namespace declaration statement has to be the very first statement or after any declare call in the script in /home4/adtc2m99/public_html/sistemas/obede/app/Http/Controllers/Admin/AlocacaoController.php on line 4
+[23-Nov-2026 20:00:29 UTC] PHP Fatal error:  Namespace declaration statement has to be the very first statement or after any declare call in the script in /home4/adtc2m99/public_html/sistemas/obede/app/Http/Controllers/Admin/AlocacaoController.php on line 4
+[23-Nov-2026 20:00:29 UTC] PHP Fatal error:  Namespace declaration statement has to be the very first statement or after any declare call in the script in /home4/adtc2m99/public_html/sistemas/obede/app/Http/Controllers/Admin/AlocacaoController.php on line 4
+[23-Nov-2026 20:00:29 UTC] PHP Fatal error:  Namespace declaration statement has to be the very first statement or after any declare call in the script in /home4/adtc2m99/public_html/sistemas/obede/app/Http/Controllers/Admin/AlocacaoController.php on line 4
+[23-Nov-2026 20:00:29 UTC] PHP Fatal error:  Namespace declaration statement has to be the very first statement or after any declare call in the script in /home4/adtc2m99/public_html/sistemas/obede/app/Http/Controllers/Admin/AlocacaoController.php on line 4
+[23-Nov-2026 20:00:29 UTC] PHP Fatal error:  Namespace declaration statement has to be the very first statement or after any declare call in the script in /home4/adtc2m99/public_html/sistemas/obede/app/Http/Controllers/Admin/AlocacaoController.php on line 4
+[23-Nov-2026 20:00:30 UTC] PHP Fatal error:  Namespace declaration statement has to be the very first statement or after any declare call in the script in /home4/adtc2m99/public_html/sistemas/obede/app/Http/Controllers/Admin/AlocacaoController.php on line 4
+[23-Nov-2026 20:00:30 UTC] PHP Fatal error:  Namespace declaration statement has to be the very first statement or after any declare call in the script in /home4/adtc2m99/public_html/sistemas/obede/app/Http/Controllers/Admin/AlocacaoController.php on line 4
+[23-Nov-2026 20:00:30 UTC] PHP Fatal error:  Namespace declaration statement has to be the very first statement or after any declare call in the script in /home4/adtc2m99/public_html/sistemas/obede/app/Http/Controllers/Admin/AlocacaoController.php on line 4
+[23-Nov-2026 20:00:30 UTC] PHP Fatal error:  Namespace declaration statement has to be the very first statement or after any declare call in the script in /home4/adtc2m99/public_html/sistemas/obede/app/Http/Controllers/Admin/AlocacaoController.php on line 4
+[23-Nov-2026 20:00:30 UTC] PHP Fatal error:  Namespace declaration statement has to be the very first statement or after any declare call in the script in /home4/adtc2m99/public_html/sistemas/obede/app/Http/Controllers/Admin/AlocacaoController.php on line 4
+[23-Nov-2026 20:00:31 UTC] PHP Fatal error:  Namespace declaration statement has to be the very first statement or after any declare call in the script in /home4/adtc2m99/public_html/sistemas/obede/app/Http/Controllers/Admin/AlocacaoController.php on line 4
+[23-Nov-2026 20:00:31 UTC] PHP Fatal error:  Namespace declaration statement has to be the very first statement or after any declare call in the script in /home4/adtc2m99/public_html/sistemas/obede/app/Http/Controllers/Admin/AlocacaoController.php on line 4
+[23-Nov-2026 20:00:31 UTC] PHP Fatal error:  Namespace declaration statement has to be the very first statement or after any declare call in the script in /home4/adtc2m99/public_html/sistemas/obede/app/Http/Controllers/Admin/AlocacaoController.php on line 4
+[23-Nov-2026 20:00:31 UTC] PHP Fatal error:  Namespace declaration statement has to be the very first statement or after any declare call in the script in /home4/adtc2m99/public_html/sistemas/obede/app/Http/Controllers/Admin/AlocacaoController.php on line 4
+[23-Nov-2026 20:01:24 UTC] PHP Fatal error:  Uncaught ErrorException: Cannot modify header information - headers already sent by (output started at /home4/adtc2m99/public_html/sistemas/obede/routes/web.php:1) in /home4/adtc2m99/public_html/sistemas/obede/vendor/symfony/http-foundation/Response.php:328
+Stack trace:
+#0 /home4/adtc2m99/public_html/sistemas/obede/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(267): Illuminate\Foundation\Bootstrap\HandleExceptions->handleError(2, 'Cannot modify h...', '/home4/adtc2m99...', 328)
+#1 [internal function]: Illuminate\Foundation\Bootstrap\HandleExceptions->{closure:Illuminate\Foundation\Bootstrap\HandleExceptions::forwardsTo():266}(2, 'Cannot modify h...', '/home4/adtc2m99...', 328)
+#2 /home4/adtc2m99/public_html/sistemas/obede/vendor/symfony/http-foundation/Response.php(328): header('HTTP/1.1 500 In...', true, 500)
+#3 /home4/adtc2m99/public_html/sistemas/obede/vendor/symfony/http-foundation/Response.php(407): Symfony\Component\HttpFoundation\Response->sendHeaders()
+#4 /home4/adtc2m99/public_html/sistemas/obede/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(230): Symfony\Component\HttpFoundation\Response->send()
+#5 /home4/adtc2m99/public_html/sistemas/obede/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(207): Illuminate\Foundation\Bootstrap\HandleExceptions->renderHttpResponse(Object(ErrorException))
+#6 /home4/adtc2m99/public_html/sistemas/obede/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(267): Illuminate\Foundation\Bootstrap\HandleExceptions->handleException(Object(ErrorException))
+#7 [internal function]: Illuminate\Foundation\Bootstrap\HandleExceptions->{closure:Illuminate\Foundation\Bootstrap\HandleExceptions::forwardsTo():266}(Object(ErrorException))
+#8 {main}
+  thrown in /home4/adtc2m99/public_html/sistemas/obede/vendor/symfony/http-foundation/Response.php on line 328
+[23-Nov-2026 20:01:27 UTC] PHP Fatal error:  Uncaught ErrorException: Cannot modify header information - headers already sent by (output started at /home4/adtc2m99/public_html/sistemas/obede/routes/web.php:1) in /home4/adtc2m99/public_html/sistemas/obede/vendor/symfony/http-foundation/Response.php:328
+Stack trace:
+#0 /home4/adtc2m99/public_html/sistemas/obede/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(267): Illuminate\Foundation\Bootstrap\HandleExceptions->handleError(2, 'Cannot modify h...', '/home4/adtc2m99...', 328)
+#1 [internal function]: Illuminate\Foundation\Bootstrap\HandleExceptions->{closure:Illuminate\Foundation\Bootstrap\HandleExceptions::forwardsTo():266}(2, 'Cannot modify h...', '/home4/adtc2m99...', 328)
+#2 /home4/adtc2m99/public_html/sistemas/obede/vendor/symfony/http-foundation/Response.php(328): header('HTTP/1.1 500 In...', true, 500)
+#3 /home4/adtc2m99/public_html/sistemas/obede/vendor/symfony/http-foundation/Response.php(407): Symfony\Component\HttpFoundation\Response->sendHeaders()
+#4 /home4/adtc2m99/public_html/sistemas/obede/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(230): Symfony\Component\HttpFoundation\Response->send()
+#5 /home4/adtc2m99/public_html/sistemas/obede/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(207): Illuminate\Foundation\Bootstrap\HandleExceptions->renderHttpResponse(Object(ErrorException))
+#6 /home4/adtc2m99/public_html/sistemas/obede/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(267): Illuminate\Foundation\Bootstrap\HandleExceptions->handleException(Object(ErrorException))
+#7 [internal function]: Illuminate\Foundation\Bootstrap\HandleExceptions->{closure:Illuminate\Foundation\Bootstrap\HandleExceptions::forwardsTo():266}(Object(ErrorException))
+#8 {main}
+  thrown in /home4/adtc2m99/public_html/sistemas/obede/vendor/symfony/http-foundation/Response.php on line 328

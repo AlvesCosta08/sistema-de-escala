@@ -65,11 +65,16 @@ Route::middleware(['auth'])->group(function () {
         Route::patch('escalas/{escala}/publicar', [EscalaController::class, 'publicar'])->name('escalas.publicar');
 
         // --- ALOCAÇÃO ---
-        Route::get('escalas/{escala}/alocacoes', [AlocacaoController::class, 'index'])->name('escalas.alocacoes.index');
-        Route::post('escalas/{escala}/alocacoes', [AlocacaoController::class, 'store'])->name('escalas.alocacoes.store');
-        Route::delete('escalas/{escala}/alocacoes/{alocacao}', [AlocacaoController::class, 'destroy'])->name('escalas.alocacoes.destroy');
+        Route::get('escalas/{escala}/alocacoes', [AlocacaoController::class, 'index'])
+            ->name('escalas.alocacoes.index');
 
-        // NOVA ROTA: MOVER ALOCAÇÃO (DRAG-AND-DROP)
+        Route::post('escalas/{escala}/alocacoes', [AlocacaoController::class, 'store'])
+            ->name('escalas.alocacoes.store');
+
+        Route::delete('escalas/{escala}/alocacoes/{alocacao}', [AlocacaoController::class, 'destroy'])
+            ->name('escalas.alocacoes.destroy');
+
+        // Drag-and-drop do calendário
         Route::patch('escalas/{escala}/alocacoes/{alocacao}/mover', [AlocacaoController::class, 'mover'])
             ->name('escalas.alocacoes.mover');
 
