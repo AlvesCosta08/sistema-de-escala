@@ -33,26 +33,31 @@ it('exibe modal de confirmacao ao clicar em remover alocacao e executa a acao', 
     // 1. Modal NÃO deve estar visível inicialmente
     $page->assertDontSee('Tem certeza que deseja remover esta alocação?');
 
-    // 2. Clicar no botão "Remover" (gatilho)
+    // 2. Forçar a abertura do <details> via JavaScript
+    // O script() não é encadeável, então chamamos separadamente e depois wait()
+    $page->script("document.querySelector('details').setAttribute('open', 'true')");
+    $page->wait(1);
+
+    // 3. Clicar no botão "Remover" (gatilho)
     $page->click('#btn-trigger-remover-' . $alocacao->id);
 
-    // 3. Modal DEVE aparecer
+    // 4. Modal DEVE aparecer
     $page->assertSee('Tem certeza que deseja remover esta alocação?')
          ->assertSee('Cancelar')
          ->assertSee('Remover');
 
-    // 4. Clicar em "Cancelar" deve fechar o modal
+    // 5. Clicar em "Cancelar" deve fechar o modal
     $page->click('Cancelar')
          ->wait(1)
          ->assertDontSee('Tem certeza que deseja remover esta alocação?');
 
-    // 5. Abrir o modal novamente e confirmar a exclusão
+    // 6. Abrir o modal novamente e confirmar a exclusão
     $page->click('#btn-trigger-remover-' . $alocacao->id)
          ->wait(1)
          ->click('#btn-confirmar-acao')
-         ->wait(2) // Aguarda o processamento e o redirect
+         ->wait(2)
          
-         // 6. Validar que a ação ocorreu (o Toast de sucesso do Laravel aparecerá)
+         // 7. Validar que a ação ocorreu
          ->assertSee('Alocação removida com sucesso')
          ->assertNoJavaScriptErrors();
 });

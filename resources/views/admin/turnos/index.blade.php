@@ -22,19 +22,16 @@
             }
         });
         
-        // Atualiza contador
         const countEl = document.getElementById('turno-count');
         if (countEl) {
             countEl.textContent = visible === 1 ? '1 turno encontrado' : visible + ' turnos encontrados';
         }
         
-        // Atualiza estado vazio
         const emptyState = document.getElementById('empty-state');
         if (emptyState) {
             emptyState.style.display = (query && visible === 0) ? 'block' : 'none';
         }
         
-        // Atualiza paginação
         const pagination = document.getElementById('pagination-container');
         if (pagination) {
             pagination.style.display = query ? 'none' : 'block';
@@ -78,7 +75,7 @@
 
     <div class="flex items-center justify-between px-2">
         <p class="text-xs font-bold text-gray-500 uppercase tracking-wide">
-            <span id="turno-count">{{ $turnos->total() }} cultos encontrados</span>
+            <span id="turno-count">{{ $turnos->total() }} {{ $turnos->total() === 1 ? 'turno encontrado' : 'turnos encontrados' }}</span>
         </p>
         <p x-show="search.length > 0" x-transition.opacity class="text-xs text-cyan-600 font-medium">
             Filtrando por: "<span x-text="search"></span>"
@@ -129,7 +126,7 @@
             <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
             </svg>
-            <p class="text-gray-500 font-medium mb-1">Nenhum culto encontrado</p>
+            <p class="text-gray-500 font-medium mb-1">Nenhum turno encontrado</p>
             <p class="text-sm text-gray-400">Tente buscar por outro termo ou 
                 <button @click="search = ''" class="text-cyan-600 hover:underline font-medium">limpe a busca</button>.
             </p>

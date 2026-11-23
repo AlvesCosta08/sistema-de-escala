@@ -3,6 +3,9 @@
 @section('header', 'Gerenciar Plantões')
 
 @section('content')
+{{-- FullCalendar CSS --}}
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
+
 <div class="space-y-4">
     <!-- Cabeçalho de Navegação -->
     <div class="flex items-center gap-3 mb-4">
@@ -15,9 +18,7 @@
         </div>
     </div>
 
-    {{-- ✅ Banners estáticos removidos! O Toast global no app.blade.php já captura session('success') e $errors automaticamente. --}}
-
-    <!-- Formulário estilo "Novo Tweet" COM LOADING STATE -->
+    <!-- Formulário de Alocação -->
     <form id="form-alocar-plantao" x-data="{ loading: false }" x-on:submit="loading = true" action="{{ route('admin.escalas.alocacoes.store', $escala) }}" method="POST" class="bg-gray-50 rounded-2xl p-4 border border-gray-100">
         @csrf
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
@@ -54,46 +55,123 @@
         </div>
     </form>
 
-    <!-- Timeline de Alocações -->
-    <div class="divide-y divide-gray-100">
-        @forelse($alocacoes as $alocacao)
-        <div class="py-4 flex flex-col md:flex-row md:items-center justify-between gap-3 hover:bg-gray-50 transition px-2 rounded-xl">
-            <div class="flex items-center gap-4">
-                <div class="w-12 h-14 bg-white border border-gray-200 rounded-xl flex flex-col items-center justify-center shadow-sm shrink-0">
-                    <span class="text-[10px] font-bold text-gray-500 uppercase">{{ \Carbon\Carbon::parse($alocacao->data)->translatedFormat('M') }}</span>
-                    <span class="text-lg font-black text-indigo-600 leading-none">{{ \Carbon\Carbon::parse($alocacao->data)->format('d') }}</span>
-                </div>
-                <div>
-                    <h4 class="font-bold text-gray-900">{{ $alocacao->user->name }}</h4>
-                    <p class="text-sm text-gray-500 font-medium">{{ $alocacao->posto->nome }} • {{ $alocacao->turno->nome }}</p>
-                    <span class="text-xs text-gray-400">Status: {{ ucfirst($alocacao->status) }}</span>
-                </div>
-            </div>
-            
-            <div>
-                {{-- ✅ NOVO COMPONENTE DE MODAL DE CONFIRMAÇÃO REUTILIZÁVEL --}}
-                <x-confirm-action 
-                    :action="route('admin.escalas.alocacoes.destroy', [$escala, $alocacao])" 
-                    method="DELETE"
-                    title="Remover Plantão"
-                    message="Tem certeza que deseja remover esta alocação? O colaborador será liberado deste turno e esta ação não pode ser desfeita."
-                    buttonText="Remover"
-                    buttonClass="bg-rose-600 hover:bg-rose-700 text-white"
-                    id="remover-{{ $alocacao->id }}"
-                >
-                    <button type="button" class="text-rose-500 hover:text-white hover:bg-rose-500 border border-rose-200 font-bold py-1.5 px-4 rounded-full text-xs transition">
-                        Remover
-                    </button>
-                </x-confirm-action>
-            </div>
+    <!-- Calendário Drag-and-Drop -->
+    <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
+        <div class="flex items-center justify-between mb-3">
+            <h3 class="text-sm font-bold text-gray-700">Calendário de Plantões</h3>
+            <span class="text-xs text-gray-500">Arraste os cards para alterar a data</span>
         </div>
-        @empty
-        <div class="text-center py-10 text-gray-500">
-            Nenhum plantão alocado para esta escala ainda.
-        </div>
-        @endforelse
+        <div id="calendario-alocacoes"></div>
     </div>
 
-    <div class="mt-4">{{ $alocacoes->links() }}</div>
+    <!-- Lista detalhada (fallback) -->
+    <details class="bg-white rounded-2xl border border-gray-100 shadow-sm">
+        <summary class="cursor-pointer p-4 font-bold text-gray-700 text-sm">Ver lista detalhada de plantões</summary>
+        <div class="divide-y divide-gray-100 px-4 pb-4">
+            @forelse($alocacoes as $alocacao)
+            <div class="py-4 flex flex-col md:flex-row md:items-center justify-between gap-3 hover:bg-gray-50 transition px-2 rounded-xl">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-14 bg-white border border-gray-200 rounded-xl flex flex-col items-center justify-center shadow-sm shrink-0">
+                        <span class="text-[10px] font-bold text-gray-500 uppercase">{{ \Carbon\Carbon::parse($alocacao->data)->translatedFormat('M') }}</span>
+                        <span class="text-lg font-black text-indigo-600 leading-none">{{ \Carbon\Carbon::parse($alocacao->data)->format('d') }}</span>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-gray-900">{{ $alocacao->user->name }}</h4>
+                        <p class="text-sm text-gray-500 font-medium">{{ $alocacao->posto->nome }} • {{ $alocacao->turno->nome }}</p>
+                        <span class="text-xs text-gray-400">Status: {{ ucfirst($alocacao->status) }}</span>
+                    </div>
+                </div>
+                <div>
+                    <x-confirm-action 
+                        :action="route('admin.escalas.alocacoes.destroy', [$escala, $alocacao])" 
+                        method="DELETE"
+                        title="Remover Plantão"
+                        message="Tem certeza que deseja remover esta alocação? O colaborador será liberado deste turno e esta ação não pode ser desfeita."
+                        buttonText="Remover"
+                        buttonClass="bg-rose-600 hover:bg-rose-700 text-white"
+                        id="remover-{{ $alocacao->id }}"
+                    >
+                        <button type="button" class="text-rose-500 hover:text-white hover:bg-rose-500 border border-rose-200 font-bold py-1.5 px-4 rounded-full text-xs transition">
+                            Remover
+                        </button>
+                    </x-confirm-action>
+                </div>
+            </div>
+            @empty
+            <div class="text-center py-10 text-gray-500">
+                Nenhum plantão alocado para esta escala ainda.
+            </div>
+            @endforelse
+        </div>
+        <div class="p-4 border-t border-gray-100">{{ $alocacoes->links() }}</div>
+    </details>
 </div>
+
+{{-- FullCalendar JS --}}
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/locales/pt-br.global.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const calendarEl = document.getElementById('calendario-alocacoes');
+        if (!calendarEl) return;
+
+        const eventos = @json($eventos);
+        const escalaId = {{ $escala->id }};
+        const csrfToken = '{{ csrf_token() }}';
+
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            locale: 'pt-br',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,listWeek'
+            },
+            buttonText: {
+                today: 'Hoje',
+                month: 'Mês',
+                week: 'Semana',
+                list: 'Lista'
+            },
+            editable: true,
+            droppable: false,
+            events: eventos,
+            eventDisplay: 'block',
+            eventTimeFormat: {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            },
+            eventDrop: function(info) {
+                const novaData = info.event.startStr.split('T')[0];
+                const alocacaoId = info.event.id;
+
+                fetch(`/admin/escalas/${escalaId}/alocacoes/${alocacaoId}/mover`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ data: novaData })
+                })
+                .then(async (response) => {
+                    const data = await response.json();
+                    if (!response.ok) {
+                        info.revert();
+                        alert(data.message || 'Erro ao mover o plantão.');
+                    } else {
+                        window.location.reload();
+                    }
+                })
+                .catch(() => {
+                    info.revert();
+                    alert('Erro de conexão. Tente novamente.');
+                });
+            }
+        });
+
+        calendar.render();
+    });
+</script>
 @endsection

@@ -14,27 +14,17 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 
-// =====================================================================
-// ROTA DEFINITIVA — serve imagens do storage sem depender de symlink
-// Restrita apenas à pasta fotos/ por segurança
-// =====================================================================
 Route::get('/arquivo/{path}', function (string $path) {
-    // Garante que só vai servir arquivos dentro da pasta fotos/
     abort_unless(str_starts_with($path, 'fotos/'), 404);
-    
     $disk = Storage::disk('public');
     abort_unless($disk->exists($path), 404);
-    
     return $disk->response($path);
 })->where('path', '.*')->name('arquivo.show');
-// =====================================================================
 
-// Redireciona a raiz para o dashboard
 Route::get('/', function () {
     return redirect()->route('dashboard');
 })->name('home');
 
-// Rotas de Autenticação (Login)
 Route::get('/login', [LoginController::class, 'index'])->name('login');
 Route::post('/login', [LoginController::class, 'store']);
 
@@ -52,36 +42,21 @@ Route::middleware(['auth'])->group(function () {
         return redirect('/');
     })->name('logout');
 
-    // Perfil do próprio usuário
-    Route::get('perfil', [PerfilController::class, 'edit'])
-        ->name('perfil.edit');
-
-    Route::post('perfil/foto', [PerfilController::class, 'updateFoto'])
-        ->name('perfil.foto.update');
+    Route::get('perfil', [PerfilController::class, 'edit'])->name('perfil.edit');
+    Route::post('perfil/foto', [PerfilController::class, 'updateFoto'])->name('perfil.foto.update');
 
     Route::middleware(['role:porteiro|recepcionista'])->group(function () {
-        Route::get('minha-escala', [MinhaEscalaController::class, 'index'])
-            ->name('minha-escala');
-
-        Route::get('minha-escala/{alocacao}/ausencia', [AvisoAusenciaController::class, 'create'])
-            ->name('ausencia.create');
-
-        Route::post('minha-escala/{alocacao}/ausencia', [AvisoAusenciaController::class, 'store'])
-            ->name('ausencia.store');
+        Route::get('minha-escala', [MinhaEscalaController::class, 'index'])->name('minha-escala');
+        Route::get('minha-escala/{alocacao}/ausencia', [AvisoAusenciaController::class, 'create'])->name('ausencia.create');
+        Route::post('minha-escala/{alocacao}/ausencia', [AvisoAusenciaController::class, 'store'])->name('ausencia.store');
     });
 
     Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(function () {
-        Route::get('ausencias', [AusenciaController::class, 'index'])
-            ->name('ausencias.index');
-
-        Route::get('ausencias/{aviso}', [AusenciaController::class, 'show'])
-            ->name('ausencias.show');
-
-        Route::post('ausencias/{aviso}/alocar', [AusenciaController::class, 'alocar'])
-            ->name('ausencias.alocar');
-
-        Route::post('ausencias/{aviso}/rejeitar', [AusenciaController::class, 'rejeitar'])
-            ->name('ausencias.rejeitar');
+        Route::get('ausencias', [AusenciaController::class, 'index'])->name('ausencias.index');
+        Route::get('ausencias/{aviso}', [AusenciaController::class, 'show'])->name('ausencias.show');
+        Route::post('ausencias/{aviso}/alocar', [AusenciaController::class, 'alocar'])->name('ausencias.alocar');
+        Route::post('ausencias/{aviso}/rejeitar', [AusenciaController::class, 'rejeitar'])->name('ausencias.rejeitar');
+        Route::delete('ausencias/{aviso}', [AusenciaController::class, 'destroy'])->name('ausencias.destroy');
 
         // --- GERENCIAMENTO DE ESCALAS ---
         Route::get('escalas', [EscalaController::class, 'index'])->name('escalas.index');
@@ -94,6 +69,10 @@ Route::middleware(['auth'])->group(function () {
         Route::post('escalas/{escala}/alocacoes', [AlocacaoController::class, 'store'])->name('escalas.alocacoes.store');
         Route::delete('escalas/{escala}/alocacoes/{alocacao}', [AlocacaoController::class, 'destroy'])->name('escalas.alocacoes.destroy');
 
+        // NOVA ROTA: MOVER ALOCAÇÃO (DRAG-AND-DROP)
+        Route::patch('escalas/{escala}/alocacoes/{alocacao}/mover', [AlocacaoController::class, 'mover'])
+            ->name('escalas.alocacoes.mover');
+
         // --- USUÁRIOS ---
         Route::get('usuarios', [UserController::class, 'index'])->name('usuarios.index');
         Route::get('usuarios/create', [UserController::class, 'create'])->name('usuarios.create');
@@ -101,10 +80,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('usuarios/{user}/edit', [UserController::class, 'edit'])->name('usuarios.edit');
         Route::put('usuarios/{user}', [UserController::class, 'update'])->name('usuarios.update');
         Route::patch('usuarios/{user}/toggle', [UserController::class, 'toggle'])->name('usuarios.toggle');
-
-        // Admin troca a foto de qualquer usuário
-        Route::post('usuarios/{user}/foto', [PerfilController::class, 'updateFotoAdmin'])
-            ->name('usuarios.foto.update');
+        Route::post('usuarios/{user}/foto', [PerfilController::class, 'updateFotoAdmin'])->name('usuarios.foto.update');
 
         // --- POSTOS ---
         Route::get('postos', [PostoController::class, 'index'])->name('postos.index');

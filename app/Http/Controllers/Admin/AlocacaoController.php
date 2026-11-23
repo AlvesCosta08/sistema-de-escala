@@ -20,11 +20,32 @@ class AlocacaoController extends Controller
             ->orderBy('turno_id')
             ->paginate(20);
 
+        // Eventos formatados para o FullCalendar
+        $eventos = Alocacao::with(['user:id,name', 'posto:id,nome', 'turno:id,nome,hora_inicio,hora_fim'])
+            ->where('escala_id', $escala->id)
+            ->get()
+            ->map(function ($alocacao) {
+                return [
+                    'id' => $alocacao->id,
+                    'title' => $alocacao->user->name . ' - ' . $alocacao->posto->nome,
+                    'start' => $alocacao->data . 'T' . $alocacao->turno->hora_inicio,
+                    'end' => $alocacao->data . 'T' . $alocacao->turno->hora_fim,
+                    'backgroundColor' => $alocacao->status === 'confirmado' ? '#4f46e5' : '#f59e0b',
+                    'borderColor' => $alocacao->status === 'confirmado' ? '#4338ca' : '#d97706',
+                    'extendedProps' => [
+                        'user_id' => $alocacao->user_id,
+                        'posto_id' => $alocacao->posto_id,
+                        'turno_id' => $alocacao->turno_id,
+                        'status' => $alocacao->status,
+                    ],
+                ];
+            });
+
         $colaboradores = User::where('active', true)->whereIn('cargo', ['porteiro', 'recepcionista'])->orderBy('name')->get();
         $postos = Posto::orderBy('nome')->get();
         $turnos = Turno::orderBy('nome')->get();
 
-        return view('admin.escalas.alocacoes', compact('escala', 'alocacoes', 'colaboradores', 'postos', 'turnos'));
+        return view('admin.escalas.alocacoes', compact('escala', 'alocacoes', 'colaboradores', 'postos', 'turnos', 'eventos'));
     }
 
     public function store(Request $request, Escala $escala)
@@ -35,7 +56,7 @@ class AlocacaoController extends Controller
                 function ($attribute, $value, $fail) use ($request, $escala) {
                     $exists = Alocacao::where('escala_id', $escala->id)
                         ->where('user_id', $value)
-                        ->whereDate('data', $request->data) // <-- CORREÇÃO AQUI
+                        ->whereDate('data', $request->data)
                         ->where('turno_id', $request->turno_id)
                         ->exists();
                     if ($exists) {
@@ -66,5 +87,34 @@ class AlocacaoController extends Controller
         $alocacao->delete();
         return redirect()->route('admin.escalas.alocacoes.index', $escala)
             ->with('success', 'Alocação removida com sucesso!');
+    }
+
+    /**
+     * Move uma alocação para outra data via drag-and-drop do calendário.
+     */
+    public function mover(Request $request, Escala $escala, Alocacao $alocacao)
+    {
+        $request->validate([
+            'data' => 'required|date',
+        ]);
+
+        // Validação de conflito
+        $conflito = Alocacao::where('escala_id', $escala->id)
+            ->where('user_id', $alocacao->user_id)
+            ->where('turno_id', $alocacao->turno_id)
+            ->whereDate('data', $request->data)
+            ->where('id', '!=', $alocacao->id)
+            ->exists();
+
+        if ($conflito) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Este colaborador já está alocado neste turno nesta data.',
+            ], 422);
+        }
+
+        $alocacao->update(['data' => $request->data]);
+
+        return response()->json(['success' => true, 'message' => 'Plantão movido com sucesso!']);
     }
 }

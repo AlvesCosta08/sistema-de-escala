@@ -45,7 +45,6 @@ class AusenciaController extends Controller
         SubstitutoService $service,
     ) {
         $substituto = User::findOrFail($request->substituto_user_id);
-
         $service->alocar($aviso, $substituto, $request->user());
 
         return redirect()
@@ -63,5 +62,14 @@ class AusenciaController extends Controller
         return redirect()
             ->route('admin.ausencias.index')
             ->with('status', 'Aviso rejeitado.');
+    }
+
+    public function destroy(AvisoAusencia $aviso)
+    {
+        $aviso->delete();
+
+        return redirect()
+            ->route('admin.ausencias.index')
+            ->with('success', 'Aviso de ausência excluído com sucesso.');
     }
 }
